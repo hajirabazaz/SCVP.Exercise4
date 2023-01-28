@@ -50,30 +50,21 @@ SC_MODULE(toplevel){
 
 // Toplevel (task 4 - memory bank):
 SC_MODULE(toplevel){
-    transition<1,1> ACT;
-    transition<1,1> RD;
-    transition<1,1> PRE;
-    transition<1,1> WR;
+    subnet s1;
+    subnet s2;
     
-    place<1,1> IDLE;
-    place<3,3> ACTIVE;   
+    place<1,1> IDLE; //-------------SHOULDNT THIS BE <2,2> ???
 
     public:
-    SC_CTOR(toplevel) : ACT("ACT"), RD("RD"), PRE("PRE"), WR("WR"), 
-    IDLE(1), ACTIVE(0)
+    SC_CTOR(toplevel) : s1("s1"), s2("s2"), 
+    IDLE(2)
     {
  
-        ACT.in(IDLE);
-        ACT.out(ACTIVE);
+        s1.ACT.in(IDLE);
+        s1.PRE.out(IDLE);
+        s2.ACT.in(IDLE);
+        s2.PRE.out(IDLE);
 
-        RD.in(ACTIVE);
-        RD.out(ACTIVE);
-
-        PRE.in(ACTIVE);
-        PRE.out(IDLE);
-
-        WR.in(ACTIVE);
-        WR.out(ACTIVE);
 
         SC_THREAD(process);
     }
@@ -83,17 +74,26 @@ SC_MODULE(toplevel){
         while (true)
         {
             wait(10, SC_NS);
-            ACT.fire();
+            s1.ACT.fire();
             wait(10, SC_NS);
-            ACT.fire();
+            s1.ACT.fire();
             wait(10, SC_NS);
-            RD.fire();
+            s1.RD.fire();
             wait(10, SC_NS);
-            WR.fire();
+            s1.WR.fire();
             wait(10, SC_NS);
-            PRE.fire();
+            s1.PRE.fire();
             wait(10, SC_NS);
-            ACT.fire();
+            s1.ACT.fire();
+            wait(10, SC_NS);
+            s2.ACT.fire();
+            wait(10, SC_NS);
+            s2.ACT.fire();
+            wait(10, SC_NS);
+            s1.PRE.fire();
+            wait(10, SC_NS);
+            s2.PRE.fire();
+            wait(10, SC_NS);
             sc_stop();
         }
     }
