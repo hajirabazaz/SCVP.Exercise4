@@ -4,7 +4,7 @@
 #include "transition.h"
 #include "subnet.h"
 
-// Toplevel:
+/*// Toplevel (task 3):
 SC_MODULE(toplevel){
     transition<1,2> t1;
     transition<2,1> t2;
@@ -41,6 +41,59 @@ SC_MODULE(toplevel){
             t3.fire();
             wait(10, SC_NS);
             t2.fire();
+            sc_stop();
+        }
+    }
+
+};
+*/
+
+// Toplevel (task 4 - memory bank):
+SC_MODULE(toplevel){
+    transition<1,1> ACT;
+    transition<1,1> RD;
+    transition<1,1> PRE;
+    transition<1,1> WR;
+    
+    place<1,1> IDLE;
+    place<3,3> ACTIVE;   
+
+    public:
+    SC_CTOR(toplevel) : ACT("ACT"), RD("RD"), PRE("PRE"), WR("WR"), 
+    IDLE(1), ACTIVE(0)
+    {
+ 
+        ACT.in(IDLE);
+        ACT.out(ACTIVE);
+
+        RD.in(ACTIVE);
+        RD.out(ACTIVE);
+
+        PRE.in(ACTIVE);
+        PRE.out(IDLE);
+
+        WR.in(ACTIVE);
+        WR.out(ACTIVE);
+
+        SC_THREAD(process);
+    }
+
+    void process()
+    {
+        while (true)
+        {
+            wait(10, SC_NS);
+            ACT.fire();
+            wait(10, SC_NS);
+            ACT.fire();
+            wait(10, SC_NS);
+            RD.fire();
+            wait(10, SC_NS);
+            WR.fire();
+            wait(10, SC_NS);
+            PRE.fire();
+            wait(10, SC_NS);
+            ACT.fire();
             sc_stop();
         }
     }
