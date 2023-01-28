@@ -27,9 +27,9 @@ SC_MODULE(transition){
         else {
             std::cout << this->name() << ": Fired" << std::endl;
             for (int i = 0; i < N; i++)
-                in[i]->removeTokens(1);
+                in[i]->removeTokens();
             for (int j = 0; j < M; j++)
-                out[j]->addTokens(1);
+                out[j]->addTokens();
         }
     }
 
